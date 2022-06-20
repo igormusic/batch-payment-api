@@ -22,6 +22,7 @@ public class Payment {
     private String paymentInstruction;
     private LocalDateTime createdOn;
     private LocalDateTime lastUpdatedOn;
+    private String error;
 
     public Payment() {
 
@@ -29,6 +30,12 @@ public class Payment {
 
     public void processPayment() {
         paymentStatus = PaymentStatus.COMPLETED;
+        lastUpdatedOn = LocalDateTime.now();
+    }
+
+    public void processPaymentError(String error) {
+        this.error = error;
+        paymentStatus = PaymentStatus.ERROR;
         lastUpdatedOn = LocalDateTime.now();
     }
 }

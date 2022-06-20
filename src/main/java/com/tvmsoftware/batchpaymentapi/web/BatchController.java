@@ -73,7 +73,7 @@ public class BatchController {
 
        List<PaymentStatusResponse> responses = payments.stream().map(
                payment ->
-               new PaymentStatusResponse( payment.getBatchId(), payment.getPaymentId(), payment.getPaymentStatus(), null))
+               new PaymentStatusResponse( payment.getBatchId(), payment.getPaymentId(), payment.getPaymentStatus(), payment.getError()))
                .collect(Collectors.toList());
 
        return new ResponseEntity<>(responses, HttpStatus.OK);
