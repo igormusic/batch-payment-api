@@ -2,10 +2,7 @@ package com.tvmsoftware.batchpaymentapi.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.tvmsoftware.batchpaymentapi.dto.BatchCreateCommand;
-import com.tvmsoftware.batchpaymentapi.model.Batch;
-import com.tvmsoftware.batchpaymentapi.model.BatchCreateResult;
-import com.tvmsoftware.batchpaymentapi.model.BatchSavedEvent;
-import com.tvmsoftware.batchpaymentapi.model.BatchService;
+import com.tvmsoftware.batchpaymentapi.model.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -13,7 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("batch")
@@ -59,5 +59,23 @@ public class BatchController {
        else {
            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
        }
+   }
+
+   @GetMapping("/{batchId}/payments")
+    public ResponseEntity<List<PaymentStatusResponse>> getPaymentStatus(@PathVariable String batchId) {
+       Optional<Batch> optionalBatch = service.getById(batchId);
+
+       if(!optionalBatch.isPresent()) {
+           return new ResponseEntity<>(new ArrayList<>(), HttpStatus.NOT_FOUND);
+       }
+
+       List<Payment> payments = service.getPaymentsForBatch(batchId);
+
+       List<PaymentStatusResponse> responses = payments.stream().map(
+               payment ->
+               new PaymentStatusResponse( payment.getBatchId(), payment.getPaymentId(), payment.getPaymentStatus(), null))
+               .collect(Collectors.toList());
+
+       return new ResponseEntity<>(responses, HttpStatus.OK);
    }
 }

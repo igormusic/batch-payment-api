@@ -85,6 +85,11 @@ public class BatchServiceImpl implements BatchService {
         return batchRepository.findById(batchId);
     }
 
+    @Override
+    public List<Payment> getPaymentsForBatch(String batchId) {
+        return paymentRepository.findPaymentsByBatchId(batchId);
+    }
+
     private void processPayment(Payment payment) {
         //TODO:Call API
         payment.processPayment();

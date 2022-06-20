@@ -10,4 +10,5 @@ public interface BatchService {
     BatchCreateResult create(BatchCreateCommand command) throws JsonProcessingException;
     void processPayments(Batch batch, List<Payment> payments);
     Optional<Batch> getById(String batchId);
+    List<Payment> getPaymentsForBatch(String batchId);
 }
