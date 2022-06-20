@@ -2,6 +2,7 @@ package com.tvmsoftware.batchpaymentapi.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.tvmsoftware.batchpaymentapi.dto.BatchCreateCommand;
+import com.tvmsoftware.batchpaymentapi.model.Batch;
 import com.tvmsoftware.batchpaymentapi.model.BatchCreateResult;
 import com.tvmsoftware.batchpaymentapi.model.BatchSavedEvent;
 import com.tvmsoftware.batchpaymentapi.model.BatchService;
@@ -10,10 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("batch")
@@ -47,6 +47,17 @@ public class BatchController {
             log.error(e.getMessage());
             return new ResponseEntity<>(new BatchCreatedResponse(command.getBatchId(),0, e.getMessage()),HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
+
+   @GetMapping("/{batchId}")
+    public ResponseEntity<Batch> getBatch(@PathVariable String batchId) {
+       Optional<Batch> optionalBatch = service.getById(batchId);
+
+       if(optionalBatch.isPresent()) {
+           return new ResponseEntity<>(optionalBatch.get(),HttpStatus.OK);
+       }
+       else {
+           return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+       }
+   }
 }

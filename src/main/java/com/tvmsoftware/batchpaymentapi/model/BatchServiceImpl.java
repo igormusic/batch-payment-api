@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -77,6 +78,11 @@ public class BatchServiceImpl implements BatchService {
         batch.markComplete();
         batchRepository.save(batch);
         log.info("processed batch " + batch.getBatchId());
+    }
+
+    @Override
+    public Optional<Batch> getById(String batchId) {
+        return batchRepository.findById(batchId);
     }
 
     private void processPayment(Payment payment) {
